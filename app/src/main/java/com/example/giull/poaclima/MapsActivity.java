@@ -9,9 +9,13 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.android.volley.Request;
+import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.example.giull.poaclima.Models.Leitura;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
@@ -19,30 +23,34 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
+    private final String Url = "https://metroclimaestacoes.procempa.com.br/metroclima/seam/resource/rest/externalRest/ultimaLeitura";
     private GoogleMap mMap;
-    private List<Leitura> mLeitura;
+    private List<Leitura> mLeitura = new ArrayList<>();
     private FusedLocationProviderClient mFusedLocationClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+
+
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -53,19 +61,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void MakeRequest() {
 
-        String url = "https://metroclimaestacoes.procempa.com.br/metroclima/seam/resource/rest/externalRest/ultimaLeitura";
+        RequestQueue queue = Volley.newRequestQueue(this);
 
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest
-                (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+        JsonArrayRequest jsObjRequest = new JsonArrayRequest
+                (Request.Method.GET, Url, null, new Response.Listener<JSONArray>() {
 
                     @Override
-                    public void onResponse(JSONObject response) {
+                    public void onResponse(JSONArray array) {
 
-                        String mJsonString = "...";
-                        JsonParser parser = new JsonParser();
-                        JsonElement mJson = parser.parse(mJsonString);
-                        Gson gson = new Gson();
-                        mLeitura = (List<Leitura>) gson.fromJson(mJson, Leitura.class);
+                        for (int i = 0; i < array.length(); i++) {
+                            try {
+                                JSONObject jsonObject = array.getJSONObject(i);
+                                mLeitura.add(ParseRequest(jsonObject));
+                            } catch (JSONException e) {
+                                Log.e("PoaClima", e.getLocalizedMessage());
+                            }
+                        }
+
+                        AddItensToMap();
 
                     }
                 }, new Response.ErrorListener() {
@@ -75,8 +88,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         Log.e("PoaClima", error.getMessage());
                     }
                 });
+
+
+        queue.add(jsObjRequest);
     }
 
+    public void AddItensToMap() {
+
+        for (Leitura leitura: mLeitura)
+        {
+            LatLng local = new LatLng(leitura.getLatitude(), leitura.getLongitude());
+            MarkerOptions mOpt = new MarkerOptions();
+            mOpt.position(local);
+            mMap.addMarker(mOpt);
+        }
+    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -119,5 +145,41 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         }
                     }
                 });
+    }
+
+    private Leitura ParseRequest(JSONObject jsonObject) {
+        try {
+            Leitura leitura = new Leitura();
+            leitura.setId(jsonObject.getInt("id"));
+            leitura.setEstacao(jsonObject.getString("estacao"));
+            leitura.setEndereco(jsonObject.getString("endereco"));
+            leitura.setEstacao(jsonObject.getString("bairro"));
+            leitura.setEstacao(jsonObject.getString("latitude"));
+            leitura.setEstacao(jsonObject.getString("longitude"));
+            leitura.setEstacao(jsonObject.getString("data"));
+            leitura.setEstacao(jsonObject.getString("temperaturaInterna"));
+            leitura.setEstacao(jsonObject.getString("umidadeInterna"));
+            leitura.setEstacao(jsonObject.getString("temperaturaExterna"));
+            leitura.setEstacao(jsonObject.getString("umidadeExterna"));
+
+            leitura.setEstacao(jsonObject.getString("chuvaDiaria"));
+            leitura.setEstacao(jsonObject.getString("pressao"));
+            leitura.setEstacao(jsonObject.getString("velocidadeVento"));
+            leitura.setEstacao(jsonObject.getString("direcaoVento"));
+            leitura.setEstacao(jsonObject.getString("velocidadeVentoRajada"));
+            leitura.setEstacao(jsonObject.getString("direcaoVentoRajada"));
+            leitura.setEstacao(jsonObject.getString("quadranteVento"));
+
+            leitura.setEstacao(jsonObject.getString("sensacaoTermica"));
+            leitura.setEstacao(jsonObject.getString("pontoOrvalho"));
+            leitura.setEstacao(jsonObject.getString("alturaNuvens"));
+            leitura.setEstacao(jsonObject.getString("idRessonare"));
+
+            return leitura;
+
+        } catch (JSONException e) {
+            Log.e("PoaClima", e.getMessage());
+            return null;
+        }
     }
 }

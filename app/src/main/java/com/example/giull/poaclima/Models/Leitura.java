@@ -1,4 +1,4 @@
-package com.example.giull.poaclima;
+package com.example.giull.poaclima.Models;
 
 import com.google.android.gms.maps.model.LatLng;
 
