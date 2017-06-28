@@ -1,11 +1,19 @@
 package com.example.giull.poaclima;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.VectorDrawable;
 import android.location.Location;
+import android.os.IBinder;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import com.android.volley.Request;
@@ -16,6 +24,7 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.giull.poaclima.Models.Leitura;
+import com.google.android.gms.dynamic.IObjectWrapper;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
@@ -23,6 +32,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -97,12 +108,36 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         for (Leitura leitura: mLeitura)
         {
+            if (leitura == null) continue;
             LatLng local = new LatLng(leitura.getLatitude(), leitura.getLongitude());
             MarkerOptions mOpt = new MarkerOptions();
+
+            if (leitura.getChuvaDiaria() > 0)
+            {
+                    if (leitura.getChuvaDiaria() < 5)
+                    {
+                        mOpt.icon(BitmapDescriptorFactory.fromResource(R.drawable.cloud));
+                    }
+                    else
+                    {
+                        mOpt.icon(BitmapDescriptorFactory.fromResource(R.drawable.rain));
+                    }
+            }
+            else
+            {
+                mOpt.icon(BitmapDescriptorFactory.fromResource(R.drawable.sun));
+
+            }
+
+            mOpt.title(leitura.getEstacao());
+            mOpt.snippet("Chuva Diária: " + leitura.getChuvaDiaria() + "\nData: " + leitura.getData());
+
             mOpt.position(local);
             mMap.addMarker(mOpt);
         }
     }
+
+
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -153,27 +188,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             leitura.setId(jsonObject.getInt("id"));
             leitura.setEstacao(jsonObject.getString("estacao"));
             leitura.setEndereco(jsonObject.getString("endereco"));
-            leitura.setEstacao(jsonObject.getString("bairro"));
-            leitura.setEstacao(jsonObject.getString("latitude"));
-            leitura.setEstacao(jsonObject.getString("longitude"));
-            leitura.setEstacao(jsonObject.getString("data"));
-            leitura.setEstacao(jsonObject.getString("temperaturaInterna"));
-            leitura.setEstacao(jsonObject.getString("umidadeInterna"));
-            leitura.setEstacao(jsonObject.getString("temperaturaExterna"));
-            leitura.setEstacao(jsonObject.getString("umidadeExterna"));
-
-            leitura.setEstacao(jsonObject.getString("chuvaDiaria"));
-            leitura.setEstacao(jsonObject.getString("pressao"));
-            leitura.setEstacao(jsonObject.getString("velocidadeVento"));
-            leitura.setEstacao(jsonObject.getString("direcaoVento"));
-            leitura.setEstacao(jsonObject.getString("velocidadeVentoRajada"));
-            leitura.setEstacao(jsonObject.getString("direcaoVentoRajada"));
-            leitura.setEstacao(jsonObject.getString("quadranteVento"));
-
-            leitura.setEstacao(jsonObject.getString("sensacaoTermica"));
-            leitura.setEstacao(jsonObject.getString("pontoOrvalho"));
-            leitura.setEstacao(jsonObject.getString("alturaNuvens"));
-            leitura.setEstacao(jsonObject.getString("idRessonare"));
+            leitura.setBairro(jsonObject.getString("bairro"));
+            leitura.setLatitude(jsonObject.getDouble("latitude"));
+            leitura.setLongitude(jsonObject.getDouble("longitude"));
+            leitura.setData(jsonObject.getString("data"));
+            leitura.setTemperaturaInterna(jsonObject.isNull("temperaturaInterna") ? 0 : jsonObject.getDouble("temperaturaInterna"));
+            leitura.setUmidadeInterna(jsonObject.isNull("umidadeInterna") ? 0 :jsonObject.getDouble("umidadeInterna"));
+            leitura.setTemperaturaExterna(jsonObject.isNull("temperaturaExterna") ? 0 :jsonObject.getDouble("temperaturaExterna"));
+            leitura.setUmidadeExterna(jsonObject.isNull("umidadeExterna") ? 0 :jsonObject.getDouble("umidadeExterna"));
+            leitura.setChuvaDiaria(jsonObject.isNull("chuvaDiaria") ? 0 :jsonObject.getDouble("chuvaDiaria"));
+            leitura.setPressao(jsonObject.isNull("pressao") ? 0 :jsonObject.getDouble("pressao"));
+            leitura.setVelocidadeVento(jsonObject.isNull("velocidadeVento") ? 0 :jsonObject.getDouble("velocidadeVento"));
+            leitura.setDirecaoVento(jsonObject.isNull("direcaoVento") ? 0 :jsonObject.getDouble("direcaoVento"));
+            leitura.setDirecaoVentoRajada(jsonObject.isNull("velocidadeVentoRajada") ? 0 :jsonObject.getDouble("velocidadeVentoRajada"));
+            leitura.setDirecaoVentoRajada(jsonObject.isNull("direcaoVentoRajada") ? 0 :jsonObject.getDouble("direcaoVentoRajada"));
+            leitura.setQuadranteVento(jsonObject.getString("quadranteVento"));
+            leitura.setSensacaoTermica(jsonObject.isNull("sensacaoTermica") ? 0 :jsonObject.getDouble("sensacaoTermica"));
+            leitura.setPontoOrvalho(jsonObject.isNull("pontoOrvalho") ? 0 :jsonObject.getDouble("pontoOrvalho"));
+            leitura.setAlturaNuvens(jsonObject.isNull("alturaNuvens") ? 0 :jsonObject.getDouble("alturaNuvens"));
+            leitura.setIdRessonare(jsonObject.getInt("idRessonare"));
 
             return leitura;
 

@@ -2,4 +2,5 @@
     <string name="app_name">PoaClima</string>
     <string name="title_activity_maps">Map</string>
     <string name="PoaClima">PoaClima</string>
+    <string name="atualizar">Atualizar</string>
 </resources>

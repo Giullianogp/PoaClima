@@ -1,9 +1,6 @@
 package com.example.giull.poaclima.Models;
 
-import com.google.android.gms.maps.model.LatLng;
-
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * Created by giull on 23/06/2017.
@@ -15,24 +12,24 @@ public class Leitura implements Serializable {
     private String estacao;
     private String endereco;
     private String bairro;
-    private double latitude;
-    private double longitude;
-    private Date data;
-    private double temperaturaInterna;
-    private double umidadeInterna;
-    private double temperaturaExterna;
-    private double umidadeExterna;
-    private double chuvaDiaria;
-    private double pressao;
-    private double velocidadeVento;
-    private double direcaoVento;
-    private double velocidadeVentoRajada;
-    private double direcaoVentoRajada;
-    private double quadranteVento;
-    private double sensacaoTermica;
-    private double pontoOrvalho;
-    private double alturaNuvens;
-    private int idRessonare;
+    private Double latitude;
+    private Double longitude;
+    private String data;
+    private Double temperaturaInterna;
+    private Double umidadeInterna;
+    private Double temperaturaExterna;
+    private Double umidadeExterna;
+    private Double chuvaDiaria;
+    private Double pressao;
+    private Double velocidadeVento;
+    private Double direcaoVento;
+    private Double velocidadeVentoRajada;
+    private Double direcaoVentoRajada;
+    private String quadranteVento;
+    private Double sensacaoTermica;
+    private Double pontoOrvalho;
+    private Double alturaNuvens;
+    private Integer idRessonare;
 
 
     public int getId() {
@@ -83,11 +80,11 @@ public class Leitura implements Serializable {
         this.longitude = longitude;
     }
 
-    public Date getData() {
+    public String getData() {
         return data;
     }
 
-    public void setData(Date data) {
+    public void setData(String data) {
         this.data = data;
     }
 
@@ -95,7 +92,7 @@ public class Leitura implements Serializable {
         return temperaturaInterna;
     }
 
-    public void setTemperaturaInterna(double temperaturaInterna) {
+    public void setTemperaturaInterna(Double temperaturaInterna) {
         this.temperaturaInterna = temperaturaInterna;
     }
 
@@ -111,7 +108,7 @@ public class Leitura implements Serializable {
         return temperaturaExterna;
     }
 
-    public void setTemperaturaExterna(double temperaturaExterna) {
+    public void setTemperaturaExterna(Double temperaturaExterna) {
         this.temperaturaExterna = temperaturaExterna;
     }
 
@@ -143,7 +140,7 @@ public class Leitura implements Serializable {
         return velocidadeVento;
     }
 
-    public void setVelocidadeVento(double velocidadeVento) {
+    public void setVelocidadeVento(Double velocidadeVento) {
         this.velocidadeVento = velocidadeVento;
     }
 
@@ -151,7 +148,7 @@ public class Leitura implements Serializable {
         return direcaoVento;
     }
 
-    public void setDirecaoVento(double direcaoVento) {
+    public void setDirecaoVento(Double direcaoVento) {
         this.direcaoVento = direcaoVento;
     }
 
@@ -171,11 +168,11 @@ public class Leitura implements Serializable {
         this.direcaoVentoRajada = direcaoVentoRajada;
     }
 
-    public double getQuadranteVento() {
+    public String getQuadranteVento() {
         return quadranteVento;
     }
 
-    public void setQuadranteVento(double quadranteVento) {
+    public void setQuadranteVento(String quadranteVento) {
         this.quadranteVento = quadranteVento;
     }
 
@@ -199,7 +196,7 @@ public class Leitura implements Serializable {
         return alturaNuvens;
     }
 
-    public void setAlturaNuvens(double alturaNuvens) {
+    public void setAlturaNuvens(Double alturaNuvens) {
         this.alturaNuvens = alturaNuvens;
     }
 
