@@ -130,7 +130,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
 
             mOpt.title(leitura.getEstacao());
-            mOpt.snippet("Chuva Diária: " + leitura.getChuvaDiaria() + "\nData: " + leitura.getData());
+            mOpt.snippet("Chuva Diária: " + leitura.getChuvaDiaria());
 
             mOpt.position(local);
             mMap.addMarker(mOpt);
